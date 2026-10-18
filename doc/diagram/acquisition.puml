@@ -1,0 +1,45 @@
+@startuml
+
+package "Local PRN generator" {
+  [GPS L1 C/A] as gpsl1ca
+  [QZSS L1 C/A] as qzssl1ca
+}
+
+package "FFT" {
+    [Float] as float
+    [Fixed] as fixed
+}
+
+node "IF data" as ifdata
+node "Doppler" as doppler
+node "GNSS system, signal and PRN number" as prn
+node "Signal integral" as int
+
+ifdata --> int : "Circle integral"
+doppler --> int : "Doppler compensation"
+prn --> gpsl1ca : "Select"
+
+node "Local PRN spectrum" as prnspec
+gpsl1ca --> prnspec : FFT
+
+
+node "Signal spectrum" as sigspec
+int --> sigspec : FFT
+
+node "Correlation spectrum" as corrspec
+sigspec --> corrspec
+prnspec --> corrspec
+
+node "Correlation value" as corrvalue
+corrspec --> corrvalue : IFFT
+
+node "Doppler, \n\
+GNSS system, \n\
+Signal, \n\
+PRN phase" as prnphase
+corrvalue --> prnphase : "Exist peak"
+
+node "Not found" as notfound
+corrvalue --> notfound : "No peak"
+
+@enduml
