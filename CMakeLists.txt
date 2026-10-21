@@ -3,6 +3,7 @@ project(GNSS_ASFAR LANGUAGES CXX)
 
 # simulator
 add_library(simulator 
+    src/simulator/signals/gps_l1ca.cpp
     src/simulator/acquisition/fft.cpp 
     src/simulator/fixedPoint.cpp
     src/main.cpp)
@@ -28,6 +29,7 @@ if(BUILD_TESTING)
     add_executable(my_tests 
         tests/fixedPointTest.cpp
         tests/complexTest.cpp
+        tests/gps_l1caTest.cpp
         )
     target_include_directories(my_tests 
         PRIVATE
