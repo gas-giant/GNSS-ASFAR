@@ -17,9 +17,17 @@ public:
         return Complex<T>(real - other.real, imag - other.imag);
     }
 
+    Complex<T> operator-(void) const {
+        return Complex<T>(-real, -imag);
+    }
+
     Complex<T> operator*(const Complex<T>& other) const {
         return Complex<T>(real * other.real - imag * other.imag,
                           real * other.imag + imag * other.real);
+    }
+
+    Complex<T> conjugate(void) const {
+        return Complex<T>(real, -imag);
     }
 };
 

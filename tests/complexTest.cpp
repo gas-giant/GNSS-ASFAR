@@ -69,3 +69,33 @@ TEST(ComplexTest, Mul) {
     ASSERT_TRUE(F_EQ(FixedToDouble(c.real), -5.125));
     ASSERT_TRUE(F_EQ(FixedToDouble(c.imag), -8.4375));
 }
+
+TEST(ComplexTest, Conj) {
+    Complex<FixedPoint> a(
+        FixedPoint(QFormat(2, 1), 0b011),   // 1.5
+        FixedPoint(QFormat(3, 2), 0b11011)  // -4 + 2 + 0.5 + 0.25 = -1.25
+    );
+    Complex<FixedPoint> b(
+        FixedPoint(QFormat(1, 3), 0b0110),  // 0.75
+        FixedPoint(QFormat(4, 0), 0b1011)   // -5
+    );
+    ASSERT_TRUE(F_EQ(FixedToDouble(a.conjugate().real), 1.5));
+    ASSERT_TRUE(F_EQ(FixedToDouble(a.conjugate().imag), 1.25));
+    ASSERT_TRUE(F_EQ(FixedToDouble(b.conjugate().real), 0.75));
+    ASSERT_TRUE(F_EQ(FixedToDouble(b.conjugate().imag), 5));
+}
+
+TEST(ComplexTest, Neg) {
+    Complex<FixedPoint> a(
+        FixedPoint(QFormat(2, 1), 0b011),   // 1.5
+        FixedPoint(QFormat(3, 2), 0b11011)  // -4 + 2 + 0.5 + 0.25 = -1.25
+    );
+    Complex<FixedPoint> b(
+        FixedPoint(QFormat(1, 3), 0b0110),  // 0.75
+        FixedPoint(QFormat(4, 0), 0b1011)   // -5
+    );
+    ASSERT_TRUE(F_EQ(FixedToDouble((-a).real), -1.5));
+    ASSERT_TRUE(F_EQ(FixedToDouble((-a).imag), 1.25));
+    ASSERT_TRUE(F_EQ(FixedToDouble((-b).real), -0.75));
+    ASSERT_TRUE(F_EQ(FixedToDouble((-b).imag), 5));
+}
