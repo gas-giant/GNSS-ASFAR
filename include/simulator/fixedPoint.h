@@ -39,6 +39,7 @@ public:
     // operator overload
     FixedPoint operator+(const FixedPoint& other) const;
     FixedPoint operator-(const FixedPoint& other) const;
+    FixedPoint operator-(void) const;
     FixedPoint operator*(const FixedPoint& other) const;
 };
 

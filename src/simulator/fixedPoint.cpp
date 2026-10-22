@@ -98,8 +98,8 @@ FixedPoint FixedPoint::operator+(const FixedPoint& other) const {
         ((S128)expandedValue_ << (tempFormat.fractionWidth - qFormat_.fractionWidth)) + 
         ((S128)other.getExpandedValue() << (tempFormat.fractionWidth - other.getQFormat().fractionWidth));
     tempFormat.integerWidth++;
-    // drop the expanded sign bits
-    if (tempFormat.integerWidth + tempFormat.fractionWidth < 128) {
+    // drop the expanded sign bits (except value with 128 bits width)
+    if (tempFormat.fractionWidth < 128 - tempFormat.integerWidth) {
         tempResult &= ((S128)1 << (tempFormat.integerWidth + tempFormat.fractionWidth)) - 1;
     }
 
@@ -118,8 +118,30 @@ FixedPoint FixedPoint::operator-(const FixedPoint& other) const {
         ((S128)expandedValue_ << (tempFormat.fractionWidth - qFormat_.fractionWidth)) - 
         ((S128)other.getExpandedValue() << (tempFormat.fractionWidth - other.getQFormat().fractionWidth));
     tempFormat.integerWidth++;
-    // drop the expanded sign bits
-    if (tempFormat.integerWidth + tempFormat.fractionWidth < 128) {
+    // drop the expanded sign bits (except value with 128 bits width)
+    if (tempFormat.fractionWidth < 128 - tempFormat.integerWidth) {
+        tempResult &= ((S128)1 << (tempFormat.integerWidth + tempFormat.fractionWidth)) - 1;
+    }
+
+    // possible truncate
+    S64 truncatedResult = TruncateTo64Bits(tempResult, tempFormat);
+    return FixedPoint(tempFormat, truncatedResult);
+}
+
+FixedPoint FixedPoint::operator-(void) const {
+    QFormat tempFormat = getQFormat();
+    if ((tempFormat.integerWidth == 64) && (getValue() == ((S64)1 << 63))) {
+        throw std::overflow_error("Integer overflowed");
+    }
+    // if the value is 0b100..0, its integer has to be expanded
+    if (getValue() == 
+        ((S64)1 << (tempFormat.integerWidth + tempFormat.fractionWidth - 1))) {
+        tempFormat.integerWidth += 1;
+    }
+    // calculate with expanded value
+    S128 tempResult = -(S128)getExpandedValue();
+    // drop the expanded sign bits (except value with 128 bits width)
+    if (tempFormat.fractionWidth < 128 - tempFormat.integerWidth) {
         tempResult &= ((S128)1 << (tempFormat.integerWidth + tempFormat.fractionWidth)) - 1;
     }
 
@@ -135,7 +157,7 @@ FixedPoint FixedPoint::operator*(const FixedPoint& other) const {
         throw std::overflow_error("Integer overflowed");
     }
     S128 tempResult = (S128)expandedValue_ * (S128)other.getExpandedValue();
-    // drop the expanded sign bits
+    // drop the expanded sign bits (except value with 128 bits width)
     if (tempFormat.fractionWidth < 128 - tempFormat.integerWidth) {
         tempResult &= ((S128)1 << (tempFormat.integerWidth + tempFormat.fractionWidth)) - 1;
     }

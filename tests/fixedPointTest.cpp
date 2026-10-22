@@ -143,6 +143,58 @@ TEST(FixedPointTest, Sub3) {
     ASSERT_EQ(c.getValue(), -((S128)65536 * 65536 * 65536 * 16384) + 1); // -(2^62) + 1
 }
 
+TEST(FixedPointTest, Neg_Invalid) {
+    FixedPoint a(QFormat(64, 0), 0x8000000000000000);
+    ASSERT_THROW(-a, std::overflow_error);
+}
+
+TEST(FixedPointTest, Neg1) {
+    FixedPoint a(QFormat(2, 2), 0b0100); // 1.0
+    FixedPoint b(QFormat(2, 2), 0b1000); // -2.0
+    FixedPoint c = -a;
+    ASSERT_EQ(c.getQFormat().integerWidth, 2);
+    ASSERT_EQ(c.getQFormat().fractionWidth, 2);
+    ASSERT_EQ(c.getValue(), 0b1100); // -1.0
+    FixedPoint d = -b;
+    ASSERT_EQ(d.getQFormat().integerWidth, 3);
+    ASSERT_EQ(d.getQFormat().fractionWidth, 2);
+    ASSERT_EQ(d.getValue(), 0b01000); // 2.0
+}
+
+TEST(FixedPointTest, Neg2) {
+    FixedPoint a(QFormat(2, 2),  0b1010); // -1.5
+    FixedPoint b(QFormat(3, 3), 0b010010); // 2.25
+    FixedPoint c = -a;
+    ASSERT_EQ(c.getQFormat().integerWidth, 2);
+    ASSERT_EQ(c.getQFormat().fractionWidth, 2);
+    ASSERT_EQ(c.getValue(), 0b0110); // 1.5
+    FixedPoint d = -b;
+    ASSERT_EQ(d.getQFormat().integerWidth, 3);
+    ASSERT_EQ(d.getQFormat().fractionWidth, 3);
+    ASSERT_EQ(d.getValue(), 0b101110); // -2.25
+}
+
+TEST(FixedPointTest, Neg3) {
+    FixedPoint a(QFormat(63, 1), ((S64)1 << 63) + 1); // -(2^62) + 0.5
+    FixedPoint b(QFormat(1, 63), ((S64)1 << 63) + 1); // -1 + 2^(-63)
+    FixedPoint c = -a;
+    ASSERT_EQ(c.getQFormat().integerWidth, 63);
+    ASSERT_EQ(c.getQFormat().fractionWidth, 1);
+    ASSERT_EQ(c.getValue(), ((U64)1 << 63) - 1); // (2^62 - 1) + 0.5 -> 0b1100...01
+    FixedPoint d = -b;
+    ASSERT_EQ(d.getQFormat().integerWidth, 1);
+    ASSERT_EQ(d.getQFormat().fractionWidth, 63);
+    ASSERT_EQ(d.getValue(), ((U64)1 << 63) - 1); // 1 - 2^(-63)
+}
+
+TEST(FixedPointTest, Neg4) {
+    FixedPoint a(QFormat(63, 1), (S64)1 << 63); // -(2^62)
+    FixedPoint b = -a;
+    ASSERT_EQ(b.getQFormat().integerWidth, 64);
+    ASSERT_EQ(b.getQFormat().fractionWidth, 0);
+    ASSERT_EQ(b.getValue(), (S64)1 << 62); // 2^62
+}
+
 TEST(FixedPointTest, Mul_Invalid) {
     FixedPoint a(QFormat(32, 32), 0);
     FixedPoint b(QFormat(33, 31), 0);
