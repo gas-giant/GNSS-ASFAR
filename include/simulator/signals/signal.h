@@ -38,9 +38,15 @@ protected:
     double fCode_;       // frequency of PRN code (Hz)
     double codeLength_;  // length of PRN code chip
 public:
-    virtual std::vector<S32> generateCodeChips(S32 prn) = 0;
+    double getFrequencyOfCode(void) const {
+        return fCode_;
+    }
+    double getCodeLength(void) const {
+        return codeLength_;
+    }
+    virtual std::vector<S32> generateCodeChips(S32 prn) const = 0;
     virtual std::vector<S32> generateSampledCode
-        (const SampleParameter& sampleParam, S32 prn) = 0;
+        (const SampleParameter& sampleParam, S32 prn) const = 0;
 };
 
 #endif // SIGNAL_H

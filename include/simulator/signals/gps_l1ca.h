@@ -9,9 +9,9 @@ public:
         codeLength_ = 1023;
         fCode_ = 1023000;
     }
-    std::vector<S32> generateCodeChips(S32 prn) override;
+    std::vector<S32> generateCodeChips(S32 prn) const override;
     std::vector<S32> generateSampledCode
-        (const SampleParameter& sampleParam, S32 prn) override;
+        (const SampleParameter& sampleParam, S32 prn) const override;
 };
 
 #endif // GPS_L1CA_H

@@ -13,7 +13,7 @@ static const S32 g_g2PrnTable[32][2] = {
 };
 
 // Generate GPS L1 C/A code chips. Value in {-1, 1}.
-std::vector<S32> SignalGpsL1CA::generateCodeChips(S32 prn) {
+std::vector<S32> SignalGpsL1CA::generateCodeChips(S32 prn) const {
     if (prn < 1 || prn > 32) {
         throw std::invalid_argument(
             "L1 C/A PRN out of range (GPS 1..32, QZSS 193..202): " +
@@ -74,7 +74,7 @@ std::vector<S32> SignalGpsL1CA::generateCodeChips(S32 prn) {
             initialCodePhase    initial code phase (chip)
 */
 std::vector<S32> SignalGpsL1CA::generateSampledCode
-    (const SampleParameter& sampleParam, S32 prn) {
+    (const SampleParameter& sampleParam, S32 prn) const {
     if (prn < 1 || prn > 32) {
         throw std::invalid_argument(
             "L1 C/A PRN out of range (GPS 1..32, QZSS 193..202): " +

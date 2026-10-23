@@ -1,0 +1,17 @@
+#ifndef IFDATA_GPSL1CA_H
+#define IFDATA_GPSL1CA_H
+/*
+    GPS L1 C/A IF samples
+    PRN 1, sample rate 16.384 MHz, IF 0 Hz (complex baseband),
+    carrier Doppler +500 Hz, code Doppler OFF (chip rate exactly 1.023 MHz),
+    code phase at sample 0 = chip 500.0, carrier phase 0 rad,
+    duration 5 ms (81920 samples), no nav data,
+    AWGN: C/N0 = 44 dB-Hz (-130 dBm signal, N0 = -174 dBm/Hz), seed 1,
+    2-bit quantized {-3,-1,+1,+3}, Q sign standard: s[n] = I[n] + j*Q[n].
+*/
+#include "common.h"
+
+#define GPS_L1CA_IF_LEN 81920
+extern const S8 g_gpsL1caIfI[GPS_L1CA_IF_LEN];
+extern const S8 g_gpsL1caIfQ[GPS_L1CA_IF_LEN];
+#endif // IFDATA_GPSL1CA_H

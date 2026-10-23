@@ -6,6 +6,7 @@ add_library(simulator
     src/simulator/signals/gps_l1ca.cpp
     src/simulator/acquisition/fft.cpp 
     src/simulator/fixedPoint.cpp
+    src/simulator/acquisition/pcps.cpp
     src/main.cpp)
 target_include_directories(simulator PUBLIC 
     include)
@@ -31,10 +32,13 @@ if(BUILD_TESTING)
         tests/complexTest.cpp
         tests/gps_l1caTest.cpp
         tests/fftTest.cpp
+        tests/acquisition/data/ifData_gpsl1ca.cpp
+        tests/acquisition/pcpsTest.cpp
         )
     target_include_directories(my_tests 
         PRIVATE
-            include)
+            include
+            tests)
     target_link_libraries(my_tests 
         PRIVATE 
             GTest::gmock_main
