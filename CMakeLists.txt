@@ -30,6 +30,7 @@ if(BUILD_TESTING)
         tests/fixedPointTest.cpp
         tests/complexTest.cpp
         tests/gps_l1caTest.cpp
+        tests/fftTest.cpp
         )
     target_include_directories(my_tests 
         PRIVATE

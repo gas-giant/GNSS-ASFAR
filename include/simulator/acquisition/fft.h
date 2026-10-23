@@ -22,10 +22,11 @@ Complex<T> GetWiddleFactor(U32 k, U32 N) {
     }
 }
 
+// in situ calculation
 template <typename T>
 U32 fft(Complex<T> *data, U32 length) {
     // length must be a power of 2
-    if ((!data) || ((length & (length - 1)) != 0)) {
+    if ((!data) || (length == 0) || ((length & (length - 1)) != 0)) {
         return FFT_INVALID_INPUT;
     }
 
@@ -33,6 +34,7 @@ U32 fft(Complex<T> *data, U32 length) {
     U32 *index = new U32[length];
     for (U32 i = 0; i < length; i++) {
         U32 temp = i;
+        // reverse all bits of i
         temp = ((temp & 0xaaaaaaaa) >> 1) | ((temp & 0x55555555) << 1);
         temp = ((temp & 0xcccccccc) >> 2) | ((temp & 0x33333333) << 2);
         temp = ((temp & 0xf0f0f0f0) >> 4) | ((temp & 0x0f0f0f0f) << 4);
@@ -47,7 +49,7 @@ U32 fft(Complex<T> *data, U32 length) {
     delete[] index;
 
     // fft
-    for (U32 step = 2; step < length; step <<= 1) {
+    for (U32 step = 2; step <= length; step <<= 1) {
         for (U32 i = 0; i < length; i += step) {
             // butterfly
             for (U32 j = 0; j < step / 2; j++) {
@@ -60,7 +62,38 @@ U32 fft(Complex<T> *data, U32 length) {
         }
     }
 
+    // save
+    for (U32 i = 0; i < length; ++i) {
+        data[i] = reversed_data[i];
+    }
+    delete[] reversed_data;
+
     return FFT_SUCCESS;
 }
 
+// in situ calculation
+template <typename T>
+U32 ifft(Complex<T> *data, U32 length) {
+    // length must be a power of 2
+    if ((!data) || (length == 0) || ((length & (length - 1)) != 0)) {
+        return FFT_INVALID_INPUT;
+    }
+
+    // conjugate
+    for (U32 i = 0; i < length; ++i) {
+        data[i] = data[i].conjugate();
+    }
+
+    // fft
+    (void)fft(data, length);
+    
+    // conjugate and normalization
+    for (U32 i = 0; i < length; ++i) {
+        data[i] = data[i].conjugate();
+        data[i].real /= length;
+        data[i].imag /= length;
+    }
+
+    return FFT_SUCCESS;
+}
 #endif // FFT_H
